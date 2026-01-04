@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeNirvahana - Master Programming Through Understanding</title>
+    <!-- Firebase SDK -->
+<!-- In admin.html, course-details.html, etc. -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script>
+
+<!-- Your Firebase Config -->
+<script src="firebase-config.js"></script>
+
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo-icon">
+                    <img src="images/logo.png">
+                </div>
+                <span class="logo-text">CodeNirvahana</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="courses.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="notes.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="admin.html" class="nav-link admin-link">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>Beyond Syntax, Towards Understanding</span>
+                </div>
+                <h1 class="hero-title">
+                    <span class="highlight">Understanding</span>
+                    Not Memorization
+                </h1>
+                <p class="hero-description">
+                    CodeNirvahana is a different kind of programming education. We don't teach you what to type—
+                    we teach you how to think. Our approach focuses on the underlying principles that make code work,
+                    enabling you to solve problems you've never seen before.
+                </p>
+                <div class="hero-actions">
+                    <a href="courses.html" class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i>
+                        Start Learning
+                    </a>
+                    <a href="#teaching-method" class="btn btn-secondary">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-visual">
+                    <div class="code-line animate-1"><span class="code-keyword">function</span> <span class="code-function">understand</span>() {</div>
+                    <div class="code-line animate-2">&nbsp;&nbsp;<span class="code-comment">// Patterns emerge from principles</span></div>
+                    <div class="code-line animate-3">&nbsp;&nbsp;<span class="code-keyword">const</span> <span class="code-variable">clarity</span> = <span class="code-string">"emerge"</span>;</div>
+                    <div class="code-line animate-4">}</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- What We Teach Section -->
+    <section class="section teaching-section" id="what-we-teach">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">What We Teach</h2>
+                <p class="section-subtitle">Focusing on transferable knowledge that lasts a career</p>
+            </div>
+            
+            <div class="teaching-grid">
+                <div class="teaching-card">
+                    <div class="teaching-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="teaching-title">Mental Models</h3>
+                    <p class="teaching-description">
+                        We build accurate mental models of how programming concepts actually work in memory,
+                        at the hardware level, and across network boundaries.
+                    </p>
+                </div>
+                
+                <div class="teaching-card">
+                    <div class="teaching-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 class="teaching-title">Systems Thinking</h3>
+                    <p class="teaching-description">
+                        Understanding how components interact to form systems, and how changes in one part
+                        affect the whole—critical for building scalable applications.
+                    </p>
+                </div>
+                
+                <div class="teaching-card">
+                    <div class="teaching-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3 class="teaching-title">Problem Decomposition</h3>
+                    <p class="teaching-description">
+                        Breaking complex problems into solvable pieces, recognizing patterns, and
+                        applying appropriate algorithms—not just memorizing solutions.
+                    </p>
+                </div>
+                
+                <div class="teaching-card">
+                    <div class="teaching-icon">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <h3 class="teaching-title">Architecture Patterns</h3>
+                    <p class="teaching-description">
+                        Learning why certain architectural patterns exist, when to use them, and how
+                        they affect maintainability, performance, and team collaboration.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why CodeNirvahana Section -->
+    <section class="section advantages-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why CodeNirvahana</h2>
+                <p class="section-subtitle">A different approach to programming education</p>
+            </div>
+            
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-number">01</div>
+                    <h3 class="advantage-title">Depth Over Breadth</h3>
+                    <p class="advantage-description">
+                        We cover fewer topics but explore them completely. You'll understand not just how
+                        to use a concept, but why it works, its limitations, and its alternatives.
+                    </p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-number">02</div>
+                    <h3 class="advantage-title">Principle-Based Learning</h3>
+                    <p class="advantage-description">
+                        Every lesson connects back to fundamental principles. This creates a web of
+                        understanding that helps you learn new technologies faster throughout your career.
+                    </p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-number">03</div>
+                    <h3 class="advantage-title">No Magic Black Boxes</h3>
+                    <p class="advantage-description">
+                        We peel back abstractions to show what's happening underneath. Frameworks and
+                        libraries become tools you understand, not magic spells you memorize.
+                    </p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-number">04</div>
+                    <h3 class="advantage-title">Focus on Transfer</h3>
+                    <p class="advantage-description">
+                        Our goal is knowledge transfer, not information delivery. We measure success by
+                        your ability to apply concepts to new problems, not by completing exercises.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How We Teach Section -->
+    <section class="section method-section" id="teaching-method">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How We Teach</h2>
+                <p class="section-subtitle">A structured approach to building understanding</p>
+            </div>
+            
+            <div class="method-steps">
+                <div class="method-step">
+                    <div class="step-indicator">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Concept Introduction</h3>
+                        <p class="step-description">
+                            We start with the "why"—the problem a concept solves, its historical context,
+                            and its place in the programming ecosystem. No code until the purpose is clear.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-indicator">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Visual & Analog Explanations</h3>
+                        <p class="step-description">
+                            Complex ideas are explained through diagrams, animations, and real-world
+                            analogies. We build accurate mental models before writing any syntax.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-indicator">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Minimal Working Examples</h3>
+                        <p class="step-description">
+                            We build the smallest possible example that demonstrates the concept, then
+                            gradually add complexity. This isolates variables and clarifies cause and effect.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-indicator">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Variation & Application</h3>
+                        <p class="step-description">
+                            Once the concept is understood, we explore variations, edge cases, and practical
+                            applications. You learn to recognize when and where to apply the concept.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="method-step">
+                    <div class="step-indicator">5</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Integration & Synthesis</h3>
+                        <p class="step-description">
+                            Finally, we integrate the new concept with previous knowledge, showing how
+                            pieces fit together into larger systems. This builds the interconnected web of understanding.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Honest Comparison Section -->
+    <section class="section comparison-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Us vs Why Not</h2>
+                <p class="section-subtitle">Honest assessment of our approach</p>
+            </div>
+            
+            <div class="comparison-container">
+                <div class="comparison-column">
+                    <div class="comparison-header positive">
+                        <h3><i class="fas fa-check-circle"></i> Why Choose CodeNirvahana</h3>
+                    </div>
+                    <div class="comparison-list">
+                        <div class="comparison-item">
+                            <i class="fas fa-check"></i>
+                            <span>You want deep understanding, not just working code</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-check"></i>
+                            <span>You're preparing for a long-term programming career</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-check"></i>
+                            <span>You enjoy understanding how things work at multiple levels</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-check"></i>
+                            <span>You want to become self-sufficient in learning new technologies</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-check"></i>
+                            <span>You value being able to explain concepts to others</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comparison-column">
+                    <div class="comparison-header negative">
+                        <h3><i class="fas fa-times-circle"></i> Why Choose Something Else</h3>
+                    </div>
+                    <div class="comparison-list">
+                        <div class="comparison-item">
+                            <i class="fas fa-times"></i>
+                            <span>You need to build something specific very quickly</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-times"></i>
+                            <span>You want lots of finished projects for a portfolio</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-times"></i>
+                            <span>You prefer copying working code over understanding it</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-times"></i>
+                            <span>You're only interested in the latest framework trends</span>
+                        </div>
+                        <div class="comparison-item">
+                            <i class="fas fa-times"></i>
+                            <span>You want certification without deep understanding</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2 class="cta-title">Ready to Understand Programming at a Deeper Level?</h2>
+                <p class="cta-description">
+                    Start your journey toward becoming a self-sufficient, principle-driven developer.
+                    The courses are empty now, but when content is added, you'll learn differently.
+                </p>
+                <div class="cta-actions">
+                    <a href="courses.html" class="btn btn-primary btn-large">
+                        <i class="fas fa-graduation-cap"></i>
+                        Explore Courses
+                    </a>
+                    <a href="admin.html" class="btn btn-secondary btn-large">
+                        <i class="fas fa-user-shield"></i>
+                        Admin Access
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-code"></i>
+                        <span>CodeNirvahana</span>
+                    </div>
+                    <p class="footer-tagline">
+                        Programming education focused on understanding, not memorization.
+                    </p>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-link-group">
+                        <h4 class="footer-link-title">Platform</h4>
+                        <a href="index.html" class="footer-link">Home</a>
+                        <a href="courses.html" class="footer-link">Courses</a>
+                        <a href="notes.html" class="footer-link">Notes</a>
+                        <a href="admin.html" class="footer-link">Admin</a>
+                    </div>
+                    
+                    <div class="footer-link-group">
+                        <h4 class="footer-link-title">Learning</h4>
+                        <a href="#what-we-teach" class="footer-link">What We Teach</a>
+                        <a href="#teaching-method" class="footer-link">How We Teach</a>
+                        <a href="#contact" class="footer-link">Methodology</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; <span id="currentYear"></span> CodeNirvahana. All rights reserved.
+                </p>
+                <p class="footer-notice">
+                    This is a frontend-only educational platform. Content will be added by administrators.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal (Hidden by default) -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Authentication Required</h3>
+                <button class="modal-close" id="closeAuthModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>This action requires admin privileges. Please log in as an administrator.</p>
+            </div>
+            <div class="modal-footer">
+                <a href="admin.html" class="btn btn-primary">Go to Admin Login</a>
+                <button class="btn btn-secondary" id="cancelAuthModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
+</body>
+</html>

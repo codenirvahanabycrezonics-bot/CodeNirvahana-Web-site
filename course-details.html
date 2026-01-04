@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Details - CodeNirvahana</title>
+    <link rel="stylesheet" href="css/course-details.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDK (Storage kept but not used for uploads) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <span class="logo-text">CodeNirvahana</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="courses.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="notes.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="admin.html" class="nav-link admin-link">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="course-detail-page">
+        <!-- Back Navigation -->
+        <div class="back-navigation">
+            <a href="courses.html" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Courses
+            </a>
+        </div>
+
+        <div class="course-detail-container">
+            <!-- SECTION 1: COURSE INFO BOX -->
+            <div class="course-info-box" id="courseInfoBox">
+                <div class="course-info-left">
+                    <div class="course-thumbnail" id="courseThumbnail">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="course-info-text">
+                        <h1 class="course-title" id="courseTitle">Loading Course...</h1>
+                        <p class="course-description" id="courseDescription"></p>
+                        <div class="course-meta-info" id="courseMetaInfo">
+                            <span class="course-meta-item" id="courseCreatedDate">
+                                <i class="far fa-calendar"></i> Loading...
+                            </span>
+                            <span class="course-meta-item" id="courseVideosCount">
+                                <i class="fas fa-video"></i> 0 videos
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="course-info-right">
+                    <div class="course-stats" id="courseStats">
+                        <div class="stat-item">
+                            <i class="fas fa-video"></i>
+                            <span class="stat-label">Total Videos</span>
+                            <span class="stat-value" id="totalVideos">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span class="stat-label">Duration</span>
+                            <span class="stat-value" id="totalDuration">0h</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="course-detail-content">
+                <div class="video-display-section">
+                    <!-- SECTION 2: VIDEO DISPLAY CONTAINER -->
+                    <div class="video-player-container">
+                        <div class="video-player" id="videoPlayer">
+                            <div class="video-empty-state" id="videoEmptyState">
+                                <i class="fas fa-video-slash"></i>
+                                <h3>No Video Selected</h3>
+                                <p>Select a video from the playlist to start learning</p>
+                            </div>
+                            <iframe id="youtubePlayer" class="youtube-iframe" style="display: none;"
+                                frameborder="0" allowfullscreen
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                title="YouTube video player">
+                            </iframe>
+                        </div>
+                        
+                        <!-- SECTION 4: NOTES / ASSIGNMENT / CODE SECTION -->
+                        <div class="video-resources" id="videoResources">
+                            <div class="resources-header">
+                                <h3><i class="fas fa-folder-open"></i> Learning Resources</h3>
+                                <div class="resources-actions">
+                                    <span class="resource-hint" id="resourceHint">Select a video to view resources</span>
+                                </div>
+                            </div>
+                            
+                            <div class="resources-empty-state" id="resourcesEmptyState">
+                                <i class="fas fa-folder-open"></i>
+                                <p>No resources available for this video</p>
+                            </div>
+                            <div class="resources-grid" id="resourcesGrid" style="display: none;">
+                                <div class="resource-card notes-resource" id="notesResource">
+                                    <div class="resource-icon">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <h4>Notes</h4>
+                                        <p class="resource-description" id="notesDescription">No notes available</p>
+                                    </div>
+                                    <div class="resource-actions">
+                                        <button class="btn btn-secondary view-resource" onclick="viewResource('notes')">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-primary download-resource" onclick="downloadResource('notes')">
+                                            <i class="fas fa-download"></i> Download
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="resource-card assignment-resource" id="assignmentResource">
+                                    <div class="resource-icon">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <h4>Assignment</h4>
+                                        <p class="resource-description" id="assignmentDescription">No assignment available</p>
+                                    </div>
+                                    <div class="resource-actions">
+                                        <button class="btn btn-secondary view-resource" onclick="viewResource('assignment')">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-primary download-resource" onclick="downloadResource('assignment')">
+                                            <i class="fas fa-download"></i> Download
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="resource-card code-resource" id="codeResource">
+                                    <div class="resource-icon">
+                                        <i class="fab fa-github"></i>
+                                    </div>
+                                    <div class="resource-info">
+                                        <h4>Code Files</h4>
+                                        <p class="resource-description" id="codeDescription">No code files available</p>
+                                    </div>
+                                    <div class="resource-actions">
+                                        <button class="btn btn-primary download-resource" onclick="downloadResource('code')">
+                                            <i class="fas fa-download"></i> Download
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 3: ADMIN VIDEO UPLOAD FORM (Now GitHub Links Form) -->
+                        <div class="admin-upload-section" id="adminUploadSection" style="display: none;">
+                            <div class="upload-form-header">
+                                <h3><i class="fas fa-upload"></i> Add New Video</h3>
+                                <button type="button" class="btn btn-secondary toggle-upload-form" id="toggleUploadForm">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                            <form id="videoUploadForm" class="upload-form">
+                                <div class="form-group">
+                                    <label for="videoTitle" class="form-label">
+                                        <i class="fas fa-heading"></i> Video Title *
+                                    </label>
+                                    <input type="text" id="videoTitle" class="form-input" placeholder="Enter video title" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="videoDescription" class="form-label">
+                                        <i class="fas fa-align-left"></i> Video Description *
+                                    </label>
+                                    <textarea id="videoDescription" class="form-input" rows="3" placeholder="Describe this video content" required></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="youtubeUrl" class="form-label">
+                                        <i class="fab fa-youtube"></i> YouTube URL *
+                                    </label>
+                                    <input type="url" id="youtubeUrl" class="form-input" placeholder="https://www.youtube.com/watch?v=..." required>
+                                    <div class="form-hint">Enter full YouTube URL or video ID (e.g., dQw4w9WgXcQ)</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="thumbnailLink" class="form-label">
+                                        <i class="fab fa-github"></i> Thumbnail Link (Optional)
+                                    </label>
+                                    <input type="url" id="thumbnailLink" class="form-input" placeholder="https://raw.githubusercontent.com/...">
+                                    <div class="form-hint">GitHub raw image URL for video thumbnail (optional)</div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="notesLink" class="form-label">
+                                            <i class="fab fa-github"></i> Notes Link (Optional)
+                                        </label>
+                                        <input type="url" id="notesLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">GitHub file or repo link for notes</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="assignmentLink" class="form-label">
+                                            <i class="fab fa-github"></i> Assignment Link (Optional)
+                                        </label>
+                                        <input type="url" id="assignmentLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">GitHub file or repo link for assignment</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="codeLink" class="form-label">
+                                            <i class="fab fa-github"></i> Code Link (Optional)
+                                        </label>
+                                        <input type="url" id="codeLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">GitHub file, repo, or gist link for code</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary" id="uploadVideoBtn">
+                                        <i class="fas fa-plus-circle"></i> Add Video
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="resetUploadForm">
+                                        <i class="fas fa-undo"></i> Clear
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- VIDEO EDIT FORM (GitHub Links Edition) -->
+                        <div class="admin-upload-section" id="editVideoSection" style="display: none;">
+                            <div class="upload-form-header">
+                                <h3><i class="fas fa-edit"></i> Edit Video</h3>
+                                <button type="button" class="btn btn-secondary toggle-edit-form" id="toggleEditForm">
+                                    <i class="fas fa-times"></i> Close
+                                </button>
+                            </div>
+                            <form id="editVideoForm" class="upload-form">
+                                <input type="hidden" id="editVideoIndex">
+                                <input type="hidden" id="editVideoId">
+                                
+                                <div class="form-group">
+                                    <label for="editVideoTitle" class="form-label">
+                                        <i class="fas fa-heading"></i> Video Title *
+                                    </label>
+                                    <input type="text" id="editVideoTitle" class="form-input" placeholder="Enter video title" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editVideoDescription" class="form-label">
+                                        <i class="fas fa-align-left"></i> Video Description *
+                                    </label>
+                                    <textarea id="editVideoDescription" class="form-input" rows="3" placeholder="Describe this video content" required></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editYoutubeUrl" class="form-label">
+                                        <i class="fab fa-youtube"></i> YouTube URL *
+                                    </label>
+                                    <input type="url" id="editYoutubeUrl" class="form-input" placeholder="https://www.youtube.com/watch?v=..." required>
+                                    <div class="form-hint">Enter full YouTube URL or video ID</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="editThumbnailLink" class="form-label">
+                                        <i class="fab fa-github"></i> Thumbnail Link (Optional)
+                                    </label>
+                                    <input type="url" id="editThumbnailLink" class="form-input" placeholder="https://raw.githubusercontent.com/...">
+                                    <div class="form-hint">GitHub raw image URL (leave empty to keep current)</div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fab fa-github"></i> Current Notes
+                                        </label>
+                                        <div class="current-file-info" id="currentNotesInfo" style="display: none;"></div>
+                                        <input type="url" id="editNotesLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">Leave empty to keep current link</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fab fa-github"></i> Current Assignment
+                                        </label>
+                                        <div class="current-file-info" id="currentAssignmentInfo" style="display: none;"></div>
+                                        <input type="url" id="editAssignmentLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">Leave empty to keep current link</div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="fab fa-github"></i> Current Code Files
+                                        </label>
+                                        <div class="current-file-info" id="currentCodeInfo" style="display: none;"></div>
+                                        <input type="url" id="editCodeLink" class="form-input" placeholder="https://github.com/...">
+                                        <div class="form-hint">Leave empty to keep current link</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary" id="saveVideoBtn">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="resetEditForm">
+                                        <i class="fas fa-undo"></i> Reset
+                                    </button>
+                                    <button type="button" class="btn btn-danger" id="deleteVideoBtn" style="display: none;">
+                                        <i class="fas fa-trash-alt"></i> Delete Video
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: VIDEO PLAYLIST -->
+                    <div class="video-playlist-section">
+                        <div class="playlist-header">
+                            <h3><i class="fas fa-list"></i>Course Videos</h3>
+                            <div class="playlist-actions">
+                                <button class="btn btn-secondary" id="refreshPlaylist">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <button class="btn btn-primary" id="addVideoBtn" style="display: none;">
+                                    <i class="fas fa-plus"></i> Add Video
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="playlist-container" id="playlistContainer">
+                            <div class="loading-state" id="playlistLoading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>Loading videos...</p>
+                            </div>
+                            <div class="playlist-empty-state" id="playlistEmpty" style="display: none;">
+                                <i class="fas fa-video-slash"></i>
+                                <h4>No Videos Available</h4>
+                                <p>This course doesn't have any videos yet.</p>
+                                <button class="btn btn-primary" id="addFirstVideoBtn" style="display: none;">
+                                    <i class="fas fa-plus"></i> Add First Video
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="modal-close" id="closeDeleteModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Are you sure you want to delete this video?</h4>
+                    <p>This action cannot be undone. All video content and associated resources will be permanently deleted.</p>
+                    <div class="delete-item-info" id="deleteVideoInfo"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteVideoBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete Permanently
+                </button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Toast -->
+    <div class="toast" id="messageToast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+    <script src="js/course-details.js"></script>
+</body>
+</html>

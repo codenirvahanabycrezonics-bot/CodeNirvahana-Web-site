@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - CodeNirvahana</title>
+    <!-- Firebase SDK - SAME VERSION AS course-details.html -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- Your Firebase Config -->
+    <script src="firebase-config.js"></script>
+    
+    <link rel="stylesheet" href="css/courses.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <span class="logo-text">CodeNirvahana</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="courses.html" class="nav-link active" aria-current="page">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="notes.html" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="admin.html" class="nav-link admin-link">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="courses-main">
+        <div class="courses-container">
+            <!-- Header Section -->
+            <div class="courses-header">
+                <h1 class="courses-title">Courses</h1>
+                <p class="courses-subtitle">Learn programming through understanding, not memorization</p>
+                
+                <div class="courses-actions" id="adminActionsContainer">
+                    <!-- Admin buttons will be added here by JavaScript -->
+                    <div class="user-info" id="userInfo">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Browse available courses</span>
+                    </div>
+                </div>
+                
+                <!-- Admin Status Indicator (hidden by default) -->
+                <div class="admin-status-indicator" id="adminStatusIndicator" style="display: none;">
+                    <span class="admin-badge">
+                        <i class="fas fa-shield-alt"></i> Admin Mode
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Courses Grid -->
+            <div class="courses-grid" id="coursesGrid">
+                <!-- Courses will be dynamically added here -->
+                
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading courses...</p>
+                </div>
+                
+                <!-- Empty State (hidden by default) -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="empty-state-title">No Courses Yet</h2>
+                    <p class="empty-state-description">
+                        Courses will appear here when the administrator adds them. 
+                        Check back soon or contact the platform administrator.
+                    </p>
+                    <div class="empty-state-actions">
+                        <a href="index.html" class="btn btn-primary">
+                            <i class="fas fa-home"></i>
+                            Return to Home
+                        </a>
+                        <a href="admin.html" class="btn btn-secondary">
+                            <i class="fas fa-user-shield"></i>
+                            Admin Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Course Modal -->
+    <div class="modal" id="addCourseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Course</h3>
+                <button class="modal-close" id="closeAddCourseModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCourseForm">
+                    <div class="form-group">
+                        <label for="courseTitle" class="form-label">
+                            <i class="fas fa-heading"></i>
+                            Course Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="courseTitle" class="form-input" 
+                               placeholder="Enter course title" required
+                               aria-describedby="courseTitleHelp">
+                        <div class="form-hint" id="courseTitleHelp">
+                            A clear, descriptive title for the course (e.g., "JavaScript Fundamentals")
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Course Description <span class="required">*</span>
+                        </label>
+                        <textarea id="courseDescription" class="form-input" rows="4" 
+                                  placeholder="Describe what students will learn in this course" 
+                                  required aria-describedby="courseDescriptionHelp"></textarea>
+                        <div class="form-hint" id="courseDescriptionHelp">
+                            Explain the course objectives and learning outcomes
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="courseThumbnail" class="form-label">
+                            <i class="fas fa-image"></i>
+                            Course Thumbnail (Optional)
+                        </label>
+                        <input type="file" id="courseThumbnail" class="form-input" 
+                               accept="image/*" aria-describedby="thumbnailHelp">
+                        <div class="form-hint" id="thumbnailHelp">
+                            Upload a thumbnail image for the course (max 5MB, JPG/PNG)
+                        </div>
+                        <div id="thumbnailPreview" class="thumbnail-preview" style="display: none;"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="addCourseForm" class="btn btn-primary" id="createCourseBtn">
+                    <i class="fas fa-plus-circle"></i>
+                    Create Course
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelAddCourseModal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal" id="editCourseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Course</h3>
+                <button class="modal-close" id="closeEditCourseModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm">
+                    <input type="hidden" id="editCourseId">
+                    
+                    <div class="form-group">
+                        <label for="editCourseTitle" class="form-label">
+                            <i class="fas fa-heading"></i>
+                            Course Title <span class="required">*</span>
+                        </label>
+                        <input type="text" id="editCourseTitle" class="form-input" 
+                               placeholder="Enter course title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editCourseDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Course Description <span class="required">*</span>
+                        </label>
+                        <textarea id="editCourseDescription" class="form-input" rows="4" 
+                                  placeholder="Describe what students will learn" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-image"></i>
+                            Course Thumbnail
+                        </label>
+                        <div id="currentThumbnailPreview" class="thumbnail-preview">
+                            <!-- Thumbnail preview will be added here -->
+                        </div>
+                        <input type="file" id="editCourseThumbnail" class="form-input" accept="image/*">
+                        <div class="form-hint">Leave empty to keep current thumbnail</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="editCourseForm" class="btn btn-primary" id="saveCourseBtn">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+                <button type="button" class="btn btn-secondary" id="cancelEditCourseModal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="modal-close" id="closeDeleteConfirmModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Are you sure you want to delete this course?</h4>
+                    <p>This action cannot be undone. All course content, including videos and resources will be permanently deleted.</p>
+                    <p id="deleteCourseName" class="delete-course-name"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete Permanently
+                </button>
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Toast -->
+    <div class="toast" id="messageToast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/courses.js"></script>
+</body>
+</html>

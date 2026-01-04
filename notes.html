@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes - CodeNirvahana</title>
+    <!-- Firebase SDK -->
+<!-- In admin.html, course-details.html, etc. -->
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script>
+
+<!-- Your Firebase Config -->
+<script src="firebase-config.js"></script>
+<script src="notes.js"></script>
+    <link rel="stylesheet" href="css/notes.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <span class="logo-text">CodeNirvahana</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="courses.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="notes.html" class="nav-link active">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Notes</span>
+                </a>
+                <a href="admin.html" class="nav-link admin-link">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="notes-main">
+        <div class="notes-container">
+            <!-- Header Section -->
+            <div class="notes-header">
+                <h1 class="notes-title">Study Notes</h1>
+                <p class="notes-subtitle">Comprehensive notes for deep understanding</p>
+                
+                <div class="notes-search">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search notes by title or description...">
+                        <button class="search-clear" id="clearSearchBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="notes-actions" id="adminActionsContainer">
+                    <!-- Admin buttons will be added here by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Notes Grid -->
+            <div class="notes-grid" id="notesGrid">
+                <!-- Notes will be dynamically added here -->
+                
+                <!-- Empty State (shown when no notes exist) -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h2 class="empty-state-title">No Notes Available</h2>
+                    <p class="empty-state-description">
+                        Study notes will appear here when uploaded by the administrator. 
+                        Check back soon or contact the platform administrator.
+                    </p>
+                    <div class="empty-state-actions">
+                        <a href="courses.html" class="btn btn-primary">
+                            <i class="fas fa-graduation-cap"></i>
+                            Browse Courses
+                        </a>
+                        <a href="admin.html" class="btn btn-secondary">
+                            <i class="fas fa-user-shield"></i>
+                            Admin Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Load More (if many notes) -->
+            <div class="load-more" id="loadMoreContainer">
+                <button class="btn btn-secondary" id="loadMoreBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Load More Notes
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Notes Modal -->
+    <div class="modal" id="uploadNotesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Upload Study Notes</h3>
+                <button class="modal-close" id="closeUploadNotesModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadNotesForm">
+                    <div class="form-group">
+                        <label for="notesTitle" class="form-label">
+                            <i class="fas fa-heading"></i>
+                            Notes Title
+                        </label>
+                        <input type="text" id="notesTitle" class="form-input" placeholder="Enter descriptive title" required>
+                        <div class="form-hint">e.g., "JavaScript Fundamentals Complete Notes"</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notesDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        <textarea id="notesDescription" class="form-input" rows="3" placeholder="Describe what these notes cover" required></textarea>
+                        <div class="form-hint">Brief overview of topics covered in these notes</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notesCourse" class="form-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            Associated Course
+                        </label>
+                        <select id="notesCourse" class="form-input" required>
+                            <option value="">Select a course</option>
+                            <!-- Course options will be added dynamically -->
+                        </select>
+                        <div class="form-hint">Select which course these notes belong to</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notesFile" class="form-label">
+                            <i class="fas fa-file-upload"></i>
+                            Select PDF File
+                        </label>
+                        <input type="file" id="notesFile" class="form-input" accept=".pdf" required>
+                        <div class="form-hint">Only PDF files are supported. Maximum file size: 10MB</div>
+                    </div>
+                    
+                    <div class="file-preview" id="notesFilePreview">
+                        <!-- File preview will be shown here -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="uploadNotesForm" class="btn btn-primary">
+                    <i class="fas fa-upload"></i>
+                    Upload Notes
+                </button>
+                <button class="btn btn-secondary" id="cancelUploadNotesModal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Notes Modal -->
+    <div class="modal" id="editNotesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Notes</h3>
+                <button class="modal-close" id="closeEditNotesModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editNotesForm">
+                    <input type="hidden" id="editNotesId">
+                    <input type="hidden" id="editCourseIndex">
+                    <input type="hidden" id="editNotesIndex">
+                    
+                    <div class="form-group">
+                        <label for="editNotesTitle" class="form-label">
+                            <i class="fas fa-heading"></i>
+                            Notes Title
+                        </label>
+                        <input type="text" id="editNotesTitle" class="form-input" placeholder="Enter descriptive title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNotesDescription" class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        <textarea id="editNotesDescription" class="form-input" rows="3" placeholder="Describe what these notes cover" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editNotesCourse" class="form-label">
+                            <i class="fas fa-graduation-cap"></i>
+                            Associated Course
+                        </label>
+                        <select id="editNotesCourse" class="form-input" required>
+                            <!-- Course options will be added dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-file-pdf"></i>
+                            Current File
+                        </label>
+                        <div id="currentNotesPreview" class="file-preview">
+                            <!-- Current file preview will be added here -->
+                        </div>
+                        <input type="file" id="editNotesFile" class="form-input" accept=".pdf">
+                        <div class="form-hint">Leave empty to keep current file</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="editNotesForm" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+                <button class="btn btn-secondary" id="cancelEditNotesModal">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteNotesModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Deletion</h3>
+                <button class="modal-close" id="closeDeleteNotesModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Are you sure you want to delete these notes?</h4>
+                    <p>This action cannot be undone. The notes will be permanently removed.</p>
+                    <p id="deleteNotesName" class="delete-notes-name"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmDeleteNotesBtn">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete Notes
+                </button>
+                <button class="btn btn-secondary" id="cancelDeleteNotesBtn">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Toast -->
+    <div class="toast" id="messageToast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message" id="toastMessage"></span>
+        </div>
+    </div>
+
+    <script src="js/notes.js"></script>
+</body>
+</html>
