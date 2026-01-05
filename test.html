@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tests | CodeNirvahana</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/test.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Header -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <span class="logo-text">CodeNirvahana</span>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="courses.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Courses</span>
+                </a>
+                <a href="test.html" class="nav-link active">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Tests</span>
+                </a>
+                <a href="admin.html" class="nav-link">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="admin-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1 class="page-title">
+                        <i class="fas fa-file-alt"></i>
+                        Tests & Assessments
+                    </h1>
+                    <p class="page-subtitle">Practice and improve your knowledge with Google Form-based assessments</p>
+                    
+                    <!-- Admin Controls - Hidden by default -->
+                    <div id="adminControls" class="admin-controls hidden">
+                        <div class="controls-header">
+                            <h3><i class="fas fa-user-shield"></i> Admin Panel</h3>
+                            <p>Manage Google Form-based tests and assessments</p>
+                        </div>
+                        <div class="controls-actions">
+                            <button id="addTestBtn" class="btn btn-primary admin-btn">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Add New Test</span>
+                            </button>
+                            <button id="logoutAdminBtn" class="btn btn-secondary admin-btn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="testSearch" placeholder="Search tests...">
+                        <button id="clearSearch" class="clear-search hidden">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="filter-options">
+                        <select id="testFilter" class="filter-select">
+                            <option value="all">All Tests</option>
+                            <option value="published">Published</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tests Container -->
+            <div class="tests-container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i>
+                        <span>Available Tests</span>
+                        <span class="test-count" id="testCount">(0)</span>
+                    </h2>
+                    <button id="refreshTests" class="btn btn-icon" title="Refresh tests">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state">
+                    <div class="spinner"></div>
+                    <p>Loading tests...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state hidden">
+                    <div class="empty-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>No tests available</h3>
+                    <p>There are currently no tests available. Please check back later.</p>
+                    <button id="createFirstTest" class="btn btn-primary hidden">
+                        <i class="fas fa-plus"></i>
+                        Create Your First Test
+                    </button>
+                </div>
+
+                <!-- Tests Grid -->
+                <div id="testGrid" class="test-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Test Player Modal - REMOVED as not needed for Google Forms -->
+    <!-- Test Results Modal - REMOVED as not needed for Google Forms -->
+
+    <!-- Add/Edit Test Modal - UPDATED for Google Form system -->
+    <div id="addTestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>
+                    <span id="addTestModalTitle">Create New Test</span>
+                </h3>
+                <button class="modal-close" id="closeAddTest">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addTestForm" class="test-form">
+                    <div class="form-section">
+                        <h4 class="form-section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Test Information
+                        </h4>
+                        <div class="form-group">
+                            <label for="testTitle" class="form-label">
+                                <i class="fas fa-heading"></i>
+                                Test Title *
+                            </label>
+                            <input type="text" id="testTitle" class="form-input" required
+                                   placeholder="Enter test title">
+                        </div>
+                        <div class="form-group">
+                            <label for="testDescription" class="form-label">
+                                <i class="fas fa-align-left"></i>
+                                Description *
+                            </label>
+                            <textarea id="testDescription" class="form-textarea" rows="3"
+                                      placeholder="Describe what this test covers..." required></textarea>
+                        </div>
+                        <!-- Google Form Link field will be inserted here dynamically by test.js -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="testTimeLimit" class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Time Limit (minutes)
+                                </label>
+                                <input type="number" id="testTimeLimit" class="form-input"
+                                       min="0" placeholder="Optional (0 = no limit)">
+                            </div>
+                            <div class="form-group">
+                                <label for="testDifficulty" class="form-label">
+                                    <i class="fas fa-chart-line"></i>
+                                    Difficulty Level
+                                </label>
+                                <select id="testDifficulty" class="form-select">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium" selected>Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="cancelTestBtn" class="btn btn-secondary">
+                            Cancel
+                        </button>
+                        <button type="submit" id="saveTestBtn" class="btn btn-success">
+                            <i class="fas fa-paper-plane"></i>
+                            Save & Publish Test
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Confirm Delete
+                </h3>
+                <button class="modal-close" id="closeDeleteModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-content">
+                    <div class="delete-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <p class="delete-message">Are you sure you want to delete this test?</p>
+                    <p class="delete-warning">This action cannot be undone.</p>
+                    <div class="test-preview" id="deleteTestPreview"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelDelete" class="btn btn-secondary">Cancel</button>
+                <button id="confirmDelete" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i>
+                    Delete Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="js/test.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
